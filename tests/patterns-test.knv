@@ -1,0 +1,21 @@
+(use patterns pattern seed text->pattern)
+(use board-fixtures at-cell grid-of square)
+
+(deftest finds-glider-by-name
+  (assert (= (text->pattern "glider") (some pattern/glider))))
+
+(deftest finds-blinker-by-name
+  (assert (= (text->pattern "blinker") (some pattern/blinker))))
+
+(deftest finds-r-pentomino-by-name
+  (assert (= (text->pattern "r-pentomino") (some pattern/r-pentomino))))
+
+(deftest unknown-name-finds-no-pattern
+  (assert (= (text->pattern "nope") none)))
+
+(deftest seed-centers-the-pattern
+  (assert (= (seed (square 5) pattern/blinker)
+             (grid-of 5
+                      (vec (at-cell 2 1)
+                           (at-cell 2 2)
+                           (at-cell 2 3))))))

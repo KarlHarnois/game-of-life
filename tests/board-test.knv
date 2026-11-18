@@ -1,10 +1,5 @@
 (use board cell cell-at)
-(use rules live-neighbor-count)
 (use board-fixtures at-cell grid-of)
-
-(deftest neighbor-count-wraps-across-corners
-  (let (grid (grid-of 4 (vec (at-cell 3 3))))
-    (assert (= (live-neighbor-count grid (at-cell 0 0)) 1))))
 
 (deftest cell-at-wraps-negative-positions
   (let (grid (grid-of 4 (vec (at-cell 3 3))))

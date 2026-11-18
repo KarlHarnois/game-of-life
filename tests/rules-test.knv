@@ -1,6 +1,29 @@
-(use rules step)
+(use board cell)
+(use rules live-neighbor-count next-cell step)
 (use patterns pattern seed)
 (use board-fixtures at-cell grid-of square)
+
+(deftest lonely-cell-dies
+  (assert (= (next-cell cell/alive 1) cell/dead)))
+
+(deftest cell-with-two-neighbors-survives
+  (assert (= (next-cell cell/alive 2) cell/alive)))
+
+(deftest cell-with-three-neighbors-survives
+  (assert (= (next-cell cell/alive 3) cell/alive)))
+
+(deftest crowded-cell-dies
+  (assert (= (next-cell cell/alive 4) cell/dead)))
+
+(deftest dead-cell-with-three-neighbors-is-born
+  (assert (= (next-cell cell/dead 3) cell/alive)))
+
+(deftest dead-cell-with-two-neighbors-stays-dead
+  (assert (= (next-cell cell/dead 2) cell/dead)))
+
+(deftest neighbor-count-wraps-across-corners
+  (let (grid (grid-of 4 (vec (at-cell 3 3))))
+    (assert (= (live-neighbor-count grid (at-cell 0 0)) 1))))
 
 (defn horizontal-blinker ()
   (grid-of 5
