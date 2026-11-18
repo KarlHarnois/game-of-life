@@ -1,0 +1,34 @@
+(use life ->delay ->settings ->size args->settings
+          grid->text pattern seed step)
+
+(def sleep-milliseconds
+  (rust "std::thread::sleep(std::time::Duration::from_millis({0} as u64))"
+    (fn (int) unit)))
+
+(def clear-screen "\u{1b}[2J\u{1b}[H")
+
+(defn main ()
+  (match (args->settings (command-line-args) (default-settings))
+    ((ok settings) (animate settings))
+    ((err failure) (eprintln (pr-str failure)) (exit 1))))
+
+(defn default-settings ()
+  (->settings :grid-size (->size :width 40 :height 20)
+              :generations 100
+              :delay (->delay :milliseconds 100)
+              :pattern pattern/glider))
+
+(defn animate (settings)
+  (loop (grid (seed (:grid-size settings) (:pattern settings))
+         generation 0)
+    (print-frame grid generation)
+    (if (< generation (:generations settings))
+      (do
+        (sleep-milliseconds (:milliseconds (:delay settings)))
+        (recur (step grid) (inc generation)))
+      (do))))
+
+(defn print-frame (grid generation)
+  (print clear-screen)
+  (println (grid->text grid))
+  (println "generation " generation))
