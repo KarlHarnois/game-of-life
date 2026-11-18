@@ -1,6 +1,6 @@
-(export ->grid ->position ->size alive? cell cell-at grid
-        grid-with-live-cells position positions size
-        translate)
+(export ->grid ->offset ->position ->size alive? cell
+        cell-at grid grid-with-live-cells offset position
+        positions size translate)
 
 (defenum cell
   alive
@@ -14,6 +14,10 @@
   :row int
   :column int)
 
+(defstruct offset
+  :rows int
+  :columns int)
+
 (defstruct grid
   :size size
   :cells (vec cell))
@@ -25,8 +29,8 @@
   (match cell (alive true) (dead false)))
 
 (defn translate (position offset)
-  (->position :row (+ (:row position) (:row offset))
-              :column (+ (:column position) (:column offset))))
+  (->position :row (+ (:row position) (:rows offset))
+              :column (+ (:column position) (:columns offset))))
 
 (type cell-at
   (fn ((ref grid) (ref position)) cell))

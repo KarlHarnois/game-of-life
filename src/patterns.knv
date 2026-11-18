@@ -1,6 +1,7 @@
 (export pattern seed text->pattern)
 
-(use board ->position grid-with-live-cells translate)
+(use board ->offset ->position grid-with-live-cells
+           translate)
 
 (defenum pattern
   glider
@@ -20,20 +21,22 @@
 
 (defn pattern-offsets (pattern)
   (match pattern
-    (glider (vec (offset 0 1)
-                 (offset 1 2)
-                 (offset 2 0)
-                 (offset 2 1)
-                 (offset 2 2)))
-    (blinker (vec (offset 1 0) (offset 1 1) (offset 1 2)))
-    (r-pentomino (vec (offset 0 1)
-                      (offset 0 2)
-                      (offset 1 0)
-                      (offset 1 1)
-                      (offset 2 1)))))
+    (glider (vec (offset-by 0 1)
+                 (offset-by 1 2)
+                 (offset-by 2 0)
+                 (offset-by 2 1)
+                 (offset-by 2 2)))
+    (blinker (vec (offset-by 1 0)
+                  (offset-by 1 1)
+                  (offset-by 1 2)))
+    (r-pentomino (vec (offset-by 0 1)
+                      (offset-by 0 2)
+                      (offset-by 1 0)
+                      (offset-by 1 1)
+                      (offset-by 2 1)))))
 
-(defn offset (row column)
-  (->position :row row :column column))
+(defn offset-by (rows columns)
+  (->offset :rows rows :columns columns))
 
 (defn text->pattern (text)
   (-> all-patterns

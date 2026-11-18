@@ -1,6 +1,6 @@
 (export live-neighbor-count next-cell step)
 
-(use board ->grid ->position alive? cell cell-at position
+(use board ->grid ->offset alive? cell cell-at position
            positions translate)
 
 (def survival-counts
@@ -10,14 +10,14 @@
   (the (vec usize) (vec 3)))
 
 (def neighbor-offsets
-  (vec (->position :row -1 :column -1)
-       (->position :row -1 :column 0)
-       (->position :row -1 :column 1)
-       (->position :row 0 :column -1)
-       (->position :row 0 :column 1)
-       (->position :row 1 :column -1)
-       (->position :row 1 :column 0)
-       (->position :row 1 :column 1)))
+  (vec (->offset :rows -1 :columns -1)
+       (->offset :rows -1 :columns 0)
+       (->offset :rows -1 :columns 1)
+       (->offset :rows 0 :columns -1)
+       (->offset :rows 0 :columns 1)
+       (->offset :rows 1 :columns -1)
+       (->offset :rows 1 :columns 0)
+       (->offset :rows 1 :columns 1)))
 
 (defn step (grid)
   (->grid :size (:size grid)
