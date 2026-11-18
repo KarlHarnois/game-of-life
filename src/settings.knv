@@ -1,0 +1,44 @@
+(export ->delay ->settings args->settings delay settings
+        settings-error)
+
+(use board size)
+(use patterns pattern text->pattern)
+
+(defstruct delay
+  :milliseconds int)
+
+(defstruct settings
+  :grid-size size
+  :generations int
+  :delay delay
+  :pattern pattern)
+
+(defenum settings-error
+  (unknown-pattern string)
+  (invalid-generations (parse-error int)))
+
+(defn args->settings (args defaults)
+  (let-try (pattern (pattern-argument args (:pattern defaults))
+            generations (generations-argument args (:generations defaults)))
+    (ok (assoc defaults :pattern pattern :generations generations))))
+
+(defn pattern-argument (args default)
+  (match (get args 0)
+    ((some text) (named-pattern (as-str text)))
+    (none (ok default))))
+
+(defn named-pattern (text)
+  (ok-or (text->pattern text)
+         (settings-error/unknown-pattern (str text))))
+
+(defn generations-argument (args default)
+  (match (get args 1)
+    ((some text) (text->generations (as-str text)))
+    (none (ok default))))
+
+(type text->generations
+  (fn ((ref str))
+    (result int settings-error)))
+
+(defn text->generations (text)
+  (ok (try (parse text))))

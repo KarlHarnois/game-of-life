@@ -1,0 +1,34 @@
+(use patterns pattern)
+
+(use settings ->delay ->settings args->settings
+              settings-error)
+
+(use board-fixtures square)
+
+(defn test-settings ()
+  (->settings :grid-size (square 8)
+              :generations 100
+              :delay (->delay :milliseconds 0)
+              :pattern pattern/glider))
+
+(deftest no-arguments-keep-defaults
+  (assert (= (unwrap-ok (args->settings (vec) (test-settings)))
+             (test-settings))))
+
+(deftest arguments-set-pattern-and-generations
+  (let (expected (->settings :grid-size (square 8)
+                             :generations 5
+                             :delay (->delay :milliseconds 0)
+                             :pattern pattern/blinker))
+    (assert (= (unwrap-ok (args->settings (vec (str "blinker") (str "5"))
+                                          (test-settings)))
+               expected))))
+
+(deftest unknown-pattern-is-an-error
+  (assert (= (pr-str (unwrap-err (args->settings (vec (str "nope"))
+                                                 (test-settings))))
+             (pr-str (settings-error/unknown-pattern (str "nope"))))))
+
+(deftest bad-generations-is-an-error
+  (assert (err? (args->settings (vec (str "glider") (str "many"))
+                                (test-settings)))))

@@ -1,0 +1,20 @@
+(use board cell)
+(use rules next-cell)
+
+(deftest lonely-cell-dies
+  (assert (= (next-cell cell/alive 1) cell/dead)))
+
+(deftest cell-with-two-neighbors-survives
+  (assert (= (next-cell cell/alive 2) cell/alive)))
+
+(deftest cell-with-three-neighbors-survives
+  (assert (= (next-cell cell/alive 3) cell/alive)))
+
+(deftest crowded-cell-dies
+  (assert (= (next-cell cell/alive 4) cell/dead)))
+
+(deftest dead-cell-with-three-neighbors-is-born
+  (assert (= (next-cell cell/dead 3) cell/alive)))
+
+(deftest dead-cell-with-two-neighbors-stays-dead
+  (assert (= (next-cell cell/dead 2) cell/dead)))

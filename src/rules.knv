@@ -1,0 +1,54 @@
+(export live-neighbor-count next-cell step)
+
+(use board ->grid ->position alive? cell cell-at position
+           positions translate)
+
+(def survival-counts
+  (the (vec usize) (vec 2 3)))
+
+(def birth-counts
+  (the (vec usize) (vec 3)))
+
+(def neighbor-offsets
+  (vec (->position :row -1 :column -1)
+       (->position :row -1 :column 0)
+       (->position :row -1 :column 1)
+       (->position :row 0 :column -1)
+       (->position :row 0 :column 1)
+       (->position :row 1 :column -1)
+       (->position :row 1 :column 0)
+       (->position :row 1 :column 1)))
+
+(defn step (grid)
+  (->grid :size (:size grid)
+          :cells (-> (positions (:size grid))
+                     (map (fn (position) (next-generation-cell grid position)))
+                     collect)))
+
+(defn next-generation-cell (grid position)
+  (next-cell (cell-at grid position)
+             (live-neighbor-count grid position)))
+
+(defn next-cell (cell live-neighbors)
+  (match cell
+    (alive (survivor live-neighbors))
+    (dead (newborn live-neighbors))))
+
+(type survivor (fn (usize) cell))
+
+(defn survivor (live-neighbors)
+  (if (contains? survival-counts live-neighbors)
+    cell/alive cell/dead))
+
+(type newborn (fn (usize) cell))
+
+(defn newborn (live-neighbors)
+  (if (contains? birth-counts live-neighbors)
+    cell/alive cell/dead))
+
+(defn live-neighbor-count (grid position)
+  (-> neighbor-offsets
+      (map (fn (offset)
+             (cell-at grid (translate position offset))))
+      (filter (fn (cell) (alive? (deref cell))))
+      count))

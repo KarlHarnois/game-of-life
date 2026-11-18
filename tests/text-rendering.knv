@@ -1,0 +1,6 @@
+(use rendering grid->text)
+(use board-fixtures at-cell grid-of)
+
+(deftest grid-renders-as-text
+  (assert (= (grid->text (grid-of 2 (vec (at-cell 0 1))))
+             ".#\n..")))

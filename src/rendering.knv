@@ -1,0 +1,19 @@
+(export grid->text)
+
+(use board ->position cell cell-at)
+
+(defn grid->text (grid)
+  (-> (range 0 (:height (:size grid)))
+      (map (fn (row) (row->text grid row)))
+      collect
+      (join "\n")))
+
+(defn row->text (grid row)
+  (-> (range 0 (:width (:size grid)))
+      (map (fn (column)
+             (cell->text (cell-at grid (->position :row row :column column)))))
+      collect
+      (join "")))
+
+(defn cell->text (cell)
+  (match cell (alive "#") (dead ".")))

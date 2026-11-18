@@ -1,0 +1,11 @@
+(export at-cell grid-of square)
+
+(use board ->position ->size grid-with-live-cells)
+
+(defn square (side) (->size :width side :height side))
+
+(defn at-cell (row column)
+  (->position :row row :column column))
+
+(defn grid-of (side live-cells)
+  (grid-with-live-cells (square side) live-cells))

@@ -1,0 +1,66 @@
+(export ->grid ->position ->size alive? cell cell-at grid
+        grid-with-live-cells position positions size
+        translate)
+
+(defenum cell
+  alive
+  dead)
+
+(defstruct size
+  :width int
+  :height int)
+
+(defstruct position
+  :row int
+  :column int)
+
+(defstruct grid
+  :size size
+  :cells (vec cell))
+
+(def int->index
+  (rust "({0} as usize)" (fn (int) usize)))
+
+(defn alive? (cell)
+  (match cell (alive true) (dead false)))
+
+(defn translate (position offset)
+  (->position :row (+ (:row position) (:row offset))
+              :column (+ (:column position) (:column offset))))
+
+(type cell-at
+  (fn ((ref grid) (ref position)) cell))
+
+(defn cell-at (grid position)
+  (let (size (:size grid)
+        index (cell-index size (wrap-position size position)))
+    (deref (at (:cells grid) (int->index index)))))
+
+(defn cell-index (size position)
+  (+ (* (:row position) (:width size))
+     (:column position)))
+
+(defn wrap-position (size position)
+  (->position :row (wrap (:row position) (:height size))
+              :column (wrap (:column position) (:width size))))
+
+(defn wrap (value limit)
+  (rem (+ (rem value limit) limit) limit))
+
+(defn positions (size)
+  (let (width (:width size))
+    (-> (range 0 (* width (:height size)))
+        (map (fn (index)
+               (->position :row (/ index width) :column (rem index width))))
+        collect)))
+
+(defn grid-with-live-cells (size live-positions)
+  (->grid :size size
+          :cells (-> (positions size)
+                     (map (fn (position)
+                            (cell-of-position live-positions (deref position))))
+                     collect)))
+
+(defn cell-of-position (live-positions position)
+  (if (contains? live-positions position)
+    cell/alive cell/dead))

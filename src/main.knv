@@ -1,5 +1,8 @@
-(use life ->delay ->settings ->size args->settings
-          grid->text pattern seed step)
+(use board ->size)
+(use patterns pattern seed)
+(use rules step)
+(use rendering grid->text)
+(use settings ->delay ->settings args->settings)
 
 (def sleep-milliseconds
   (rust "std::thread::sleep(std::time::Duration::from_millis({0} as u64))"

@@ -1,0 +1,46 @@
+(use rules step)
+(use patterns pattern seed)
+(use board-fixtures at-cell grid-of square)
+
+(defn horizontal-blinker ()
+  (grid-of 5
+           (vec (at-cell 2 1)
+                (at-cell 2 2)
+                (at-cell 2 3))))
+
+(defn vertical-blinker ()
+  (grid-of 5
+           (vec (at-cell 1 2)
+                (at-cell 2 2)
+                (at-cell 3 2))))
+
+(defn step-times (grid times)
+  (loop (current grid
+         remaining times)
+    (if (> remaining 0)
+      (recur (step current) (dec remaining))
+      current)))
+
+(deftest blinker-turns-vertical
+  (assert (= (step (horizontal-blinker))
+             (vertical-blinker))))
+
+(deftest blinker-turns-back-horizontal
+  (assert (= (step-times (horizontal-blinker) 2)
+             (horizontal-blinker))))
+
+(deftest block-stays-still
+  (let (block (grid-of 4
+                       (vec (at-cell 1 1)
+                            (at-cell 1 2)
+                            (at-cell 2 1)
+                            (at-cell 2 2))))
+    (assert (= (step (clone block)) block))))
+
+(deftest glider-wraps-around-the-torus
+  (let (start (seed (square 8) pattern/glider))
+    (assert (= (step-times (clone start) 32) start))))
+
+(deftest glider-moves-away-before-wrapping
+  (let (start (seed (square 8) pattern/glider))
+    (assert (not= (step-times (clone start) 4) start))))
