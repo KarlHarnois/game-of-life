@@ -1,6 +1,6 @@
 # game-of-life
 
-Conway's Game of Life in [Knave](https://crates.io/crates/knave), animated in the terminal on a 40x20 grid whose edges wrap around.
+Conway's Game of Life in [Knave](https://knave-lang.org), animated in the terminal on a 40x20 grid whose edges wrap around.
 
 ## Install
 
